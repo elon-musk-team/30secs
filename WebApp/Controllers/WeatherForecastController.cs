@@ -11,6 +11,7 @@ namespace WebApp.Controllers
     /// <summary>
     /// контроллер, сгенеренный аспом. можно убрать. а можно не убирать, а писать апишки по образцу
     /// </summary>
+    [ProducesResponseType(401)]
     [Authorize]
     [ApiController]
     [Route("[controller]")]
@@ -32,6 +33,9 @@ namespace WebApp.Controllers
         /// </summary>
         /// <returns>капец в этом методе код причудливый</returns>
         [HttpGet]
+        // ProducesResponseType - документирование статус-кодов и типов возвращаемых значений. 200 - хорошо, 400 - нехорошо
+        [ProducesResponseType(400)]
+        [ProducesResponseType(typeof(IEnumerable<WeatherForecast>), 200)]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
