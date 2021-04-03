@@ -8,23 +8,29 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// контроллер, сгенеренный аспом. можно убрать. а можно не убирать, а писать апишки по образцу
+    /// </summary>
     [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
+        private static readonly string[] Summaries = {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
+        
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// тест иксэмэль комментария
+        /// </summary>
+        /// <returns>капец в этом методе код причудливый</returns>
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

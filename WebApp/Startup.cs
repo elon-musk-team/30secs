@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +14,7 @@ using WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace WebApp
 {
@@ -49,6 +53,21 @@ namespace WebApp
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            // https://www.rightpoint.com/rplabs/2019/07/swagger/
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "30secs api",
+                    Version = "v1",
+                });
+                
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var commentsFileName = Assembly.GetEntryAssembly()?.GetName().Name + ".xml";
+                var commentsFile = Path.Combine(baseDirectory, commentsFileName);
+                options.IncludeXmlComments(commentsFile);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +94,14 @@ namespace WebApp
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
+            
+            // https://www.rightpoint.com/rplabs/2019/07/swagger/
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("v1/swagger.json", "30secs api v1");
+            });
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -86,7 +113,6 @@ namespace WebApp
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
-
                 if (env.IsDevelopment())
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
