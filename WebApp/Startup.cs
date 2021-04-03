@@ -11,6 +11,7 @@ using WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace WebApp
 {
@@ -69,7 +70,7 @@ namespace WebApp
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            app.UseSerilogRequestLogging();
             app.UseRouting();
 
             app.UseAuthentication();
