@@ -87,10 +87,10 @@ namespace WebApp
                     {securityScheme, Array.Empty<string>()},
                 });
                 
-                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                /*var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 var commentsFileName = Assembly.GetEntryAssembly()?.GetName().Name + ".xml";
                 var commentsFile = Path.Combine(baseDirectory, commentsFileName);
-                options.IncludeXmlComments(commentsFile);
+                options.IncludeXmlComments(commentsFile);*/
             });
         }
 
