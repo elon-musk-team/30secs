@@ -18,12 +18,10 @@ namespace WebApp.Data
                 try
                 {
                     var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-                    logger.LogDebug(env.EnvironmentName);
-                    if (env.IsDevelopment())
-                    {
-                        logger.LogDebug("inside env is development");
+                    //if (env.IsDevelopment())
+                    //{
                         scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
-                    }
+                    //}
                 }
                 catch (Exception e)
                 {
