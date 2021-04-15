@@ -34,9 +34,10 @@ namespace WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
-
+                // options.UseSqlite(
+                // Configuration.GetConnectionString("SQLite")));
+                options.UseMySql(Configuration.GetConnectionString("MySQL"), ServerVersion.AutoDetect(Configuration.GetConnectionString("MySQL"))));
+                
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
