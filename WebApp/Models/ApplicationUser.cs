@@ -8,5 +8,7 @@ namespace WebApp.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public List<UserToContact> UserToContactUsers { get; set; }
+        public List<UserToContact> UserToContactContacts { get; set; }
     }
 }

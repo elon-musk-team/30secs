@@ -3,10 +3,6 @@ using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Data
 {
@@ -14,8 +10,29 @@ namespace WebApp.Data
     {
         public ApplicationDbContext(
             DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+            IOptions<OperationalStoreOptions> operationalStoreOptions) 
+            : base(options, operationalStoreOptions)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<UserToContact>()
+                .HasKey(x => x.Id);
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.UserToContactUsers)
+                .WithOne(x => x.User)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.UserToContactContacts)
+                .WithOne(x => x.Contact)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        /// <summary>
+        /// Таблица, устанавливающая связь между пользователями и их контактами
+        /// </summary>
+        public DbSet<UserToContact> UsersToContacts { get; set; }
     }
 }
