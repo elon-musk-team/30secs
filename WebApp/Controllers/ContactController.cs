@@ -1,18 +1,16 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
+using WebApp.Dto;
 using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    [ProducesResponseType(401)]
-    [Authorize]
-    [ApiController]
     [Route("[controller]")]
-    public class ContactController : ControllerBase
+    public class ContactController : BaseAuthorizedController
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
@@ -25,28 +23,44 @@ namespace WebApp.Controllers
         /// возвращает все контакты текущего пользователя
         /// </summary>
         [HttpGet("ThisUserContacts")]
+        [ProducesResponseType(typeof(List<ContactDto>), 200)]
         public async Task<IActionResult> GetThisUserContacts()
         {
-            var userId = User.Identity?.Name;
             var contacts = await _applicationDbContext.UsersToContacts
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == UserId)
                 .Select(x => x.Contact)
                 .ToListAsync();
-            return Ok(contacts);
+            var contactDtos = contacts.Select(x => new ContactDto
+            {
+                ScreenName = x.ScreenName,
+                LinkToAvatar = x.LinkToAvatar,
+            });
+            return Ok(contactDtos);
         }
         
         /// <summary>
-        /// добавляет указанного пользователя этому пользователю в контакты (не завершено)
+        /// добавляет переданного пользователя этому пользователю в контакты
         /// </summary>
         [HttpPost("ThisUserContacts")]
-        public async Task<IActionResult> AddContactToThisUser(string chatId)
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> AddContactToThisUser(string screenName)
         {
-            var userId = User.Identity?.Name;
+            var contact =  await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.ScreenName == screenName);
+            if (contact == null)
+            {
+                return BadRequest(new ErrorDto
+                {
+                    ErrorCode = 1,
+                    ErrorText = "Пользователь с таким screenName не найден",
+                });
+            }
             await _applicationDbContext.UsersToContacts
                 .AddAsync(new UserToContact
                 {
-                    
+                    ContactId = contact.Id,
+                    UserId = UserId,
                 });
+            await _applicationDbContext.SaveChangesAsync();
             return Ok();
         }
     }

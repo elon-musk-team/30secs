@@ -28,6 +28,9 @@ namespace WebApp.Data
                 .HasMany(x => x.UserToContactContacts)
                 .WithOne(x => x.Contact)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationUser>()
+                .HasIndex(x => x.ScreenName)
+                .IsUnique();
         }
 
         /// <summary>
