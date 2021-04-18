@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
@@ -44,7 +45,7 @@ namespace WebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
-                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();

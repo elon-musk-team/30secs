@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="app.db" CopyToOutputDirectory="Always" />
     <None Update="Certificates\cert.pfx" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
