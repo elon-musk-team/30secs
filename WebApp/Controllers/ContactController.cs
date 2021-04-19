@@ -43,7 +43,7 @@ namespace WebApp.Controllers
         /// </summary>
         [HttpPost("ThisUserContacts")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddContactToThisUser(string screenName)
+        public async Task<IActionResult> AddContactToThisUser([FromQuery] string screenName)
         {
             var contact =  await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.ScreenName == screenName);
             if (contact == null)
@@ -52,6 +52,18 @@ namespace WebApp.Controllers
                 {
                     ErrorCode = 1,
                     ErrorText = "Пользователь с таким screenName не найден",
+                });
+            }
+            var thisUserContacts = await _applicationDbContext.UsersToContacts
+                .Where(x => x.UserId == UserId && x.ContactId == contact.Id)
+                .Select(x => x.Contact)
+                .ToListAsync();
+            if (thisUserContacts.Any())
+            {
+                return BadRequest(new ErrorDto
+                {
+                    ErrorCode = 2,
+                    ErrorText = "Этого пользователя уже добавляли",
                 });
             }
             await _applicationDbContext.UsersToContacts
