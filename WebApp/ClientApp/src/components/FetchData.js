@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import authService from './api-authorization/AuthorizeService'
 import {authorizedFetch} from "../Utils/authorizedFetch";
 
 export class FetchData extends Component {
@@ -54,7 +53,8 @@ export class FetchData extends Component {
   }
 
   async populateWeatherData() {
-    const data = await authorizedFetch('weatherforecast');
+    const response = await authorizedFetch('weatherforecast');
+    const data = await response.json();
     this.setState({ forecasts: data, loading: false });
   }
 }

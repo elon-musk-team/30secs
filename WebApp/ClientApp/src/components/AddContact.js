@@ -11,18 +11,23 @@ export class AddContact extends Component{
 
     async incrementCounter() {
         const inputData = document.getElementById('screenname').value
-        // здесь очевидная дыра в безопасности но я чет тороплюсь
+        // защита от плохих данных происходит на бэке, поэтому могу себе позволить вставлять что угодно
         const data = await authorizedFetch(`Contact/ThisUserContacts?screenName=${inputData}`, {method: 'POST'})
+        const result = document.getElementById('result');
+        if (data.ok){
+            result.innerText = `ok, ${inputData}`
+        } else {
+            result.innerText = `you have error ${data.status} and json ${JSON.stringify(await data.json())}`
+        }
     }
     
     render() {
         return (
             <div>
                 <p>надо написать сюда ScreenName чела которого хочешь добавить</p>
-
                 <input id="screenname"/>
-
                 <button className="btn btn-primary" onClick={this.incrementCounter}>Нажми f12 -{">"} сеть потом сюда</button>
+                <p id="result">Здесь будет результат</p>
             </div>
         );
     }
