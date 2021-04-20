@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Constants;
 using WebApp.Data;
 using WebApp.Dto;
 using WebApp.Models;
@@ -50,7 +51,7 @@ namespace WebApp.Controllers
             {
                 return BadRequest(new ErrorDto
                 {
-                    ErrorCode = 1,
+                    ErrorCode = (int)ApiErrors.NoSuchUser,
                     ErrorText = "Пользователь с таким screenName не найден",
                 });
             }
@@ -62,7 +63,7 @@ namespace WebApp.Controllers
             {
                 return BadRequest(new ErrorDto
                 {
-                    ErrorCode = 2,
+                    ErrorCode = (int)ApiErrors.Already,
                     ErrorText = "Этого пользователя уже добавляли",
                 });
             }
@@ -72,6 +73,40 @@ namespace WebApp.Controllers
                     ContactId = contact.Id,
                     UserId = UserId,
                 });
+            await _applicationDbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        /// <summary>
+        /// удаляет переданного юзера из контактов этого
+        /// </summary>
+        [HttpDelete("ThisUserContacts")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> DeleteContact([FromQuery] string screenName)
+        {
+            var contactUser =  await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.ScreenName == screenName);
+            if (contactUser == null)
+            {
+                return BadRequest(new ErrorDto
+                {
+                    ErrorCode = (int)ApiErrors.NoSuchUser,
+                    ErrorText = "Пользователь с таким screenName не найден",
+                });
+            }
+
+            var contactTask = _applicationDbContext.UsersToContacts
+                .FirstOrDefaultAsync(x => x.UserId == UserId && x.ContactId == contactUser.Id);
+            var contact = await contactTask;
+            if (contact == null)
+            {
+                return BadRequest(new ErrorDto
+                {
+                    ErrorCode = (int)ApiErrors.Already,
+                    ErrorText = "Этого пользователя уже удаляли или не добавляли",
+                });
+            }
+
+            _applicationDbContext.UsersToContacts.Remove(contact);
             await _applicationDbContext.SaveChangesAsync();
             return Ok();
         }
