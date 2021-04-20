@@ -7,8 +7,68 @@ code {
   color: #e01a76;
 }
 
+li{
+  margin: 16px auto;
+  border-bottom: 2px solid #fff;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+.chat-input {
+  width: 1px;
+  height: 30px; /* Высота поля в пикселах */
+  resize: none; /* Запрещаем изменять размер */
+  border: none;
+  position: absolute;
+  bottom: 0;
+  padding: 2px 0 0 0;
+  margin: 0;
+}
+.chat-input:focus {
+  outline: none !important;
+  /*border-color: #719ECE;*/
+  /*box-shadow: 0 0 10px #719ECE;*/
+}
+.user-contacts{
+  outline: 1px solid #000;
+  border: 2px solid #fff;
+  width: 30%;
+  height: 800px;
+}
+.contacts{
+  list-style: none;
+  margin: 0;
+  padding-left: 10px;
+}
+.chat-place{
+  outline: 1px solid #000;
+  border: 2px solid #fff;
+  width: 70%;
+  height: 800px;
+  position: relative;
+}
+.main-page{
+  display: flex;
+  position: relative;
+  border-color: #719ECE;
+  box-shadow: 0 0 10px #719ECE;
+}
+.chat-text-wrap{
+  position: absolute;
+  bottom: 0;
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+}
+.chat-container{
+  position: relative;
+}
+.chat-text{
+  word-wrap: break-word;
+  margin-bottom: 0;
+  white-space: break-spaces;
 }
