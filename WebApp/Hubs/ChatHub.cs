@@ -11,12 +11,7 @@ namespace WebApp.Hubs
     {
         public async Task Send(char letter)
         {
-
-            await this.Clients.Others.SendAsync("Send", letter);
-
-
+            await Clients.Others.SendAsync("Send", letter);
         }
-
-
     }
 }

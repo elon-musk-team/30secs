@@ -13,10 +13,8 @@ export class Home extends Component {
 		 this.hubConnection = new signalR.HubConnectionBuilder()
 			.withUrl("default")
 			.build();
-
 		this.hubConnection.start();
 		this.hubConnection.on("Send", data => this.textChange(data))
-
 	}
 
 	textChange(text){
