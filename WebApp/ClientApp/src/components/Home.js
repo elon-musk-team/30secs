@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
 import {Contact} from "./Contact";
 import {authorizedFetch} from "../Utils/authorizedFetch";
+import * as signalR from "@microsoft/signalr";
 
 
 export class Home extends Component {
 	static displayName = Home.name;
+	static hubConnection;
 	state = {
 		text: '',
 		contactDtos: [],
 	}
 
 	async componentDidMount() {
+		// signalr
+		this.hubConnection = new signalR.HubConnectionBuilder()
+			.withUrl("default")
+			.build();
+		this.hubConnection.start();
+		this.hubConnection.on("Send", data => this.textChange(data))
+		// contact list
 		let contactGetResponse = await authorizedFetch('Contact/ThisUserContacts');
 		if (contactGetResponse.ok) {
 			this.setState({
@@ -67,8 +76,12 @@ export class Home extends Component {
 						<div className="chat-text" onScroll={() => {this.scrollHandle()}}>{this.state.text}
 							<input type="text"
 							       className="chat-input"
-							       value=""
-							       onChange={(event => {this.textChange(event.target.value)})}
+								value=""
+								onChange={(event => {
+									this.textChange(event.target.value);
+									this.hubConnection.invoke("Send", event.target.value)
+								})
+								}
 							/>
 						</div>
 					</div>
