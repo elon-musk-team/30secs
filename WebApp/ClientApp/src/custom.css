@@ -39,7 +39,7 @@ li{
 .contacts{
   list-style: none;
   margin: 0;
-  padding-left: 10px;
+  padding-left: 0;
 }
 .chat-place{
   outline: 1px solid #000;
@@ -88,4 +88,21 @@ li{
 }
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(128,128,128,0.8);
+}
+
+/*мастера сиэсэс почините аватарки*/
+.avatar-circle {
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  clip-path: circle(at center);
+}
+
+.contact-container {
+  padding: 8px 8px;
+}
+
+.contact-label {
+  margin-bottom: 0;
 }
