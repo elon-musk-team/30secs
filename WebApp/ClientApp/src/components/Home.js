@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
+import * as signalR from "@microsoft/signalr";
 
 
 export class Home extends Component {
 	static displayName = Home.name;
+	static hubConnection;
 	state = {
 		text: '',
+	}
+
+	componentDidMount() {
+		 this.hubConnection = new signalR.HubConnectionBuilder()
+			.withUrl("default")
+			.build();
+
+		this.hubConnection.start();
+		this.hubConnection.on("Send", data => this.textChange(data))
+
 	}
 
 	textChange(text){
@@ -50,8 +62,8 @@ export class Home extends Component {
 						<div className="chat-text" onScroll={() => {this.scrollHandle()}}>{this.state.text}
 							<input type="text"
 							       className="chat-input"
-							       value=""
-							       onChange={(event => {this.textChange(event.target.value)})}
+								value=""
+								onChange={(event => { this.textChange(event.target.value); this.hubConnection.invoke("Send", event.target.value)})}
 							/>
 						</div>
 					</div>
