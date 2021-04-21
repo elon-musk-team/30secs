@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using WebApp.Hubs;
 
 namespace WebApp
 {
@@ -52,6 +53,7 @@ namespace WebApp
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSignalR();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -130,6 +132,7 @@ namespace WebApp
             
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("default");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
