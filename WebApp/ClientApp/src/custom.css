@@ -7,11 +7,6 @@ code {
   color: #e01a76;
 }
 
-li{
-  margin: 16px auto;
-  outline: #fff solid 2px ;
-}
-
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
@@ -97,10 +92,6 @@ li{
   height: 20px;
   border-radius: 50%;
   clip-path: circle(at center);
-}
-
-.contact-container {
-  padding: 8px 8px;
 }
 
 .contact-label {
