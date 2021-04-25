@@ -28,7 +28,7 @@ export class Home extends Component {
 			})
 		} else {
 			// у данного запроса нет 400-х ошибок, значит произошла жопа
-			alert(contactGetResponse.text())
+			alert(await contactGetResponse.text())
 		}
 	}
 
