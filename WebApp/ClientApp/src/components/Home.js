@@ -6,7 +6,6 @@ import * as signalR from "@microsoft/signalr";
 
 export class Home extends Component {
 	static displayName = Home.name;
-	static hubConnection;
 	state = {
 		text: '',
 		contactDtos: [],
@@ -19,6 +18,8 @@ export class Home extends Component {
 			.build();
 		this.hubConnection.start();
 		this.hubConnection.on("Send", data => this.textChange(data))
+		this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
+		this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
 		// contact list
 		let contactGetResponse = await authorizedFetch('Contact/ThisUserContacts');
 		if (contactGetResponse.ok) {
@@ -30,6 +31,8 @@ export class Home extends Component {
 			// у данного запроса нет 400-х ошибок, значит произошла жопа
 			alert(await contactGetResponse.text())
 		}
+		setTimeout(() => this.hubConnection.invoke("GetStartedString"), 500);
+		setInterval(() => this.hubConnection.invoke("CheckSymbols"), 1000);
 	}
 
 	textChange(text){
@@ -42,6 +45,19 @@ export class Home extends Component {
 					this.scrollDown();
 			}, 10)
 	}
+
+
+	textDelete(count) {
+		this.setState({
+			text: this.state.text.slice(count),
+		});
+	}
+
+	getStartedString(str) {
+		this.setState({
+			text: str
+		});
+    }
 	
 	scrollDown(){
 		let chatBody = document.querySelector('.chat-text');
@@ -79,7 +95,7 @@ export class Home extends Component {
 								value=""
 								onChange={(event => {
 									this.textChange(event.target.value);
-									this.hubConnection.invoke("Send", event.target.value)
+									this.hubConnection.invoke("Send", null, event.target.value)
 								})
 								}
 							/>
