@@ -231,3 +231,5 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 /WebApp/app.db
+
+WebApp/appsettings.Development.json
