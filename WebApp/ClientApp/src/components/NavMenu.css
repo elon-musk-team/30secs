@@ -16,3 +16,9 @@ html {
 .box-shadow {
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
 }
+
+.nav-item:focus,
+.nav-item:hover {
+  background-color: rgba(149, 187, 237, 0.12);
+  border-radius: 10px;
+}
