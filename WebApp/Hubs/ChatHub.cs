@@ -37,9 +37,18 @@ namespace WebApp.Hubs
             if (count > 0)
                 await Clients.All.SendAsync("DeleteSymbols", count);
         }
+        
+        /// <summary>
+        /// Отправить всю инфу о символе (не тестил)
+        /// </summary>
+        public async Task SendFullLetter(Letter letter)
+        {
+            Letters.Enqueue(letter);
+            await Clients.Others.SendAsync(nameof(SendFullLetter), letter);
+        }
     }
 
-
+    
 
     public class Letter  // не забыть перенести в отдельный файл
     {
