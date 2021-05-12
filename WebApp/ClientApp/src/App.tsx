@@ -10,6 +10,7 @@ import { ApplicationPaths } from "./components/api-authorization/ApiAuthorizatio
 
 import "./custom.css";
 import {AddContact} from "./components/AddContact";
+import {FlexSandbox} from "./components/FlexSandbox";
 
 export default class App extends Component {
   static displayName = App.name;
@@ -20,6 +21,7 @@ export default class App extends Component {
         <AuthorizeRoute exact path="/" component={Home} />
         <Route path="/counter" component={Counter} />
         <AuthorizeRoute path="/fetch-data" component={FetchData} />
+        <Route path="/flex-sandbox" component={FlexSandbox}/>  
         <AuthorizeRoute path="/add-contact" component={AddContact}/>
         <Route
           path={ApplicationPaths.ApiAuthorizationPrefix}
