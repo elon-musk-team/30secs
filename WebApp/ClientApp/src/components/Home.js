@@ -98,6 +98,7 @@ export class Home extends Component {
 					document.querySelector(".chat-input").focus();
 					this.scrollDown()
 				}}>
+					<div className="messages-place"></div>
 					<div className="chat-text-wrap">
 						<div className="chat-text" id="chat-content" onScroll={() => {this.scrollHandle()}}>
 							{this.state.text.split('').map(value => 

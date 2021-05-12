@@ -7,6 +7,14 @@ code {
   color: #e01a76;
 }
 
+body {
+  background-color: rgb(231, 235, 240);
+}
+
+header {
+  background-color: #fff;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
@@ -27,29 +35,46 @@ code {
 }
 .user-contacts{
   padding: 8px 16px;
-  outline: 1px solid #000;
-  border: 1px solid #fff;
+  border: 1px solid #000;
   width: 30%;
   height: 800px;
+  margin-right: 20px;
+  background-color: #fff;
+  border-radius: 12px ;
 }
+
 .contacts{
   list-style: none;
   margin: 0;
   padding-left: 0;
 }
+
 .chat-place{
-  outline: 1px solid #000;
-  border: 1px solid #fff;
+  border: 1px solid #000;
   width: 70%;
   height: 800px;
   position: relative;
+  background-color: #fff;
+  border-radius:  12px ;
 }
+
+.chat-place::before{
+  content: "";
+  background:  url("images/social-media-in-hand-drawn-doodles-seamless-pattern_39663-246.jpg");
+  opacity: 0.15;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: auto;
+}
+
 .main-page{
   display: flex;
   position: relative;
-  border-color: #719ECE;
-  box-shadow: 0 0 10px #719ECE;
 }
+
 .chat-text-wrap{
   position: absolute;
   bottom: 0;
