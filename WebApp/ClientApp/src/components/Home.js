@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Contact} from "./Contact";
 import {authorizedFetch} from "../Utils/authorizedFetch";
 import * as signalR from "@microsoft/signalr";
+import {Symbol} from "./Symbol/Symbol";
 
 
 export class Home extends Component {
@@ -11,12 +12,22 @@ export class Home extends Component {
 		contactDtos: [],
 	}
 
+	borderColorClasses = ["border-color-1", "border-color-2", "border-color-3", "border-color-4"];
+	
+	// todo сейчас буквы эпилептично раскрашиваются, потом надо чтоб они красились в зависимости от контакта
+	// и для этого сначала надо сделать чтоб сообщения отправлялись кому надо а не всем подряд
+	getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+	}
+	
 	async componentDidMount() {
 		// signalr
 		this.hubConnection = new signalR.HubConnectionBuilder()
 			.withUrl("default")
 			.build();
-		this.hubConnection.start();
+		await this.hubConnection.start();
 		this.hubConnection.on("Send", data => this.textChange(data))
 		this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
 		this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
@@ -24,7 +35,6 @@ export class Home extends Component {
 		let contactGetResponse = await authorizedFetch('Contact/ThisUserContacts');
 		if (contactGetResponse.ok) {
 			this.setState({
-				text: '',
 				contactDtos: await contactGetResponse.json(),
 			})
 		} else {
@@ -35,11 +45,11 @@ export class Home extends Component {
 		setInterval(() => this.hubConnection.invoke("CheckSymbols"), 1000);
 	}
 
-	textChange(text){
+	textChange(newText){
 		this.setState({
-			text: this.state.text + text,
+			text: this.state.text + newText,
 		});
-		if(text !== "")
+		if(newText !== "")
 			setTimeout(() => {
 				if (document.querySelector('.chat-text').scrollHeight > document.querySelector('.chat-place').clientHeight - 10)
 					this.scrollDown();
@@ -89,7 +99,10 @@ export class Home extends Component {
 					this.scrollDown()
 				}}>
 					<div className="chat-text-wrap">
-						<div className="chat-text" onScroll={() => {this.scrollHandle()}}>{this.state.text}
+						<div className="chat-text" id="chat-content" onScroll={() => {this.scrollHandle()}}>
+							{this.state.text.split('').map(value => 
+							    <Symbol content={value} borderColorClass={this.borderColorClasses[this.getRandomInt(0, 3)]}/>
+							)}
 							<input type="text"
 							       className="chat-input"
 								value=""
