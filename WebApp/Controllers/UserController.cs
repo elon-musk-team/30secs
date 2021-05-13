@@ -19,7 +19,7 @@ namespace WebApp.Controllers
         /// <summary>
         /// инфа о данном пользователе с идентити (кроме системной и чувствительной)
         /// </summary>
-        [HttpGet("my-data")]
+        [HttpGet("my-info")]
         public async Task<IActionResult> GetMyData()
         {
             var myUser = await _applicationDbContext.Users.FindAsync(UserId);
