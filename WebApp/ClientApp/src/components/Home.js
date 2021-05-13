@@ -12,6 +12,7 @@ export class Home extends Component {
 		contactDtos: [],
 		selectedPeerName: "",
 	}
+	myInfo = null;
 	// refs
 	chatInput = null;
 	chatText = null;
@@ -38,15 +39,25 @@ export class Home extends Component {
 		this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
 		this.hubConnection.on("SendFullLetter", data => console.log(data))
 		// contact list
-		let contactGetResponse = await authorizedFetch('Contact/ThisUserContacts');
+		let contactGetResponse = await authorizedFetch('contact/this-user-contacts');
 		if (contactGetResponse.ok) {
 			this.setState({
 				contactDtos: await contactGetResponse.json(),
 			})
 		} else {
 			// у данного запроса нет 400-х ошибок, значит произошла жопа
-			alert(await contactGetResponse.text())
+			alert('идентити опять бесится, перелогинься')
 		}
+
+		// это все надо бы в один запрос или как то со страницей передать
+		// my info
+		let myInfoResponse = await authorizedFetch('user/my-info');
+		if (!myInfoResponse.ok) {
+			// у данного запроса нет 400-х ошибок, значит произошла жопа
+			alert('идентити опять бесится, перелогинься')
+		}
+		this.myInfo = await myInfoResponse.json();
+		
 		setTimeout(() => this.hubConnection.invoke("GetStartedString"), 500);
 		setInterval(() => this.hubConnection.invoke("CheckSymbols"), 1000);
 	}
@@ -119,9 +130,10 @@ export class Home extends Component {
 							       className="chat-input"
 								   ref={(input) => {this.chatInput = input}}
 								value=""
-								onChange={(event => {
+								onChange={(async event => {
 									this.textChange(event.target.value);
 									this.hubConnection.invoke("Send", null, event.target.value)
+									this.hubConnection.invoke("SendFullLetter", {author: this.myInfo.author, symbol: event.target.value, shelfLife: Date.now(), })
 								})
 								}
 							/>

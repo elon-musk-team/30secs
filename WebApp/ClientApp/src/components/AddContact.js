@@ -12,7 +12,7 @@ export class AddContact extends Component{
     async incrementCounter() {
         const inputData = document.getElementById('screenname').value
         // защита от плохих данных происходит на бэке, поэтому могу себе позволить вставлять что угодно
-        const data = await authorizedFetch(`Contact/ThisUserContacts?screenName=${inputData}`, {method: 'POST'})
+        const data = await authorizedFetch(`contact/this-user-contacts?screenName=${inputData}`, {method: 'POST'})
         const result = document.getElementById('result');
         if (data.ok){
             result.innerText = `ok, ${inputData}`

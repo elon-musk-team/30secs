@@ -10,7 +10,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    [Route("[controller]")]
+    [Route("contact/this-user-contacts")]
     public class ContactController : BaseAuthorizedController
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -23,7 +23,7 @@ namespace WebApp.Controllers
         /// <summary>
         /// возвращает все контакты текущего пользователя
         /// </summary>
-        [HttpGet("ThisUserContacts")]
+        [HttpGet]
         [ProducesResponseType(typeof(List<ContactDto>), 200)]
         public async Task<IActionResult> GetThisUserContacts()
         {
@@ -42,7 +42,7 @@ namespace WebApp.Controllers
         /// <summary>
         /// добавляет переданного пользователя этому пользователю в контакты
         /// </summary>
-        [HttpPost("ThisUserContacts")]
+        [HttpPost]
         [ProducesResponseType(200)]
         public async Task<IActionResult> AddContactToThisUser([FromQuery] string screenName)
         {
@@ -80,7 +80,7 @@ namespace WebApp.Controllers
         /// <summary>
         /// удаляет переданного юзера из контактов этого
         /// </summary>
-        [HttpDelete("ThisUserContacts")]
+        [HttpDelete]
         [ProducesResponseType(200)]
         public async Task<IActionResult> DeleteContact([FromQuery] string screenName)
         {
