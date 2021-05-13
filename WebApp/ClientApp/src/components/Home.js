@@ -10,8 +10,13 @@ export class Home extends Component {
 	state = {
 		text: '',
 		contactDtos: [],
+		selectedPeerName: "",
 	}
-
+	// refs
+	chatInput = null;
+	chatText = null;
+	chatPlace = null;
+	
 	borderColorClasses = ["border-color-1", "border-color-2", "border-color-3", "border-color-4"];
 	
 	// todo сейчас буквы эпилептично раскрашиваются, потом надо чтоб они красились в зависимости от контакта
@@ -31,6 +36,7 @@ export class Home extends Component {
 		this.hubConnection.on("Send", data => this.textChange(data))
 		this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
 		this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
+		this.hubConnection.on("SendFullLetter", data => console.log(data))
 		// contact list
 		let contactGetResponse = await authorizedFetch('Contact/ThisUserContacts');
 		if (contactGetResponse.ok) {
@@ -51,7 +57,7 @@ export class Home extends Component {
 		});
 		if(newText !== "")
 			setTimeout(() => {
-				if (document.querySelector('.chat-text').scrollHeight > document.querySelector('.chat-place').clientHeight - 10)
+				if (this.chatText.scrollHeight > this.chatPlace.clientHeight - 10)
 					this.scrollDown();
 			}, 10)
 	}
@@ -68,19 +74,24 @@ export class Home extends Component {
 			text: str
 		});
     }
-	
+    
+    selectPeer(screenName) {
+		this.setState({
+			selectedPeerName: screenName,
+		});
+	}
+    
 	scrollDown(){
-		let chatBody = document.querySelector('.chat-text');
-		chatBody.scrollTop = chatBody.scrollHeight;
+		this.chatText.scrollTop = this.chatText.scrollHeight;
 	}
 	
 	scrollHandle(){
-		document.querySelector(".chat-input").blur()
-		let scrollHeight = document.querySelector('.chat-text').scrollHeight;
-		let scrollTop = document.querySelector('.chat-text').scrollTop
+		this.chatInput.blur()
+		let scrollHeight = this.chatText.scrollHeight;
+		let scrollTop = this.chatText.scrollTop
 		// надо будет вообще гибкий макет делать такта))0
 		if (scrollHeight - scrollTop === 800) // 800 высота чатека, надо будет взять из свойства
-			setTimeout(function () { document.querySelector(".chat-input").focus()}, 11);
+			setTimeout(() => { this.chatInput.focus() }, 11);
 	}
 	// phraseComponent - сделать
 	render () {
@@ -90,22 +101,23 @@ export class Home extends Component {
 					<ul className="list-group list-group-flush contacts">
 						<Contact avatarLink="https://i.kym-cdn.com/entries/icons/original/000/013/564/doge.jpg" screenName="sample_comtact_umgmg"/>
 						{this.state.contactDtos.map(value => 
-							<Contact avatarLink={value.avatarLink} screenName={value.screenName}/>
+							<Contact avatarLink={value.avatarLink} screenName={value.screenName} onClick={() => this.selectPeer(value.screenName)}/>
 							)}
 					</ul>
 				</div>
-				<div className="chat-place" onClick={() => {
-					document.querySelector(".chat-input").focus();
+				<div className="chat-place" ref={ (chatPlace) => this.chatPlace = chatPlace } onClick={() => {
+					this.chatInput.focus();
 					this.scrollDown()
 				}}>
 					<div className="messages-place"></div>
 					<div className="chat-text-wrap">
-						<div className="chat-text" id="chat-content" onScroll={() => {this.scrollHandle()}}>
+						<div className="chat-text" id="chat-content" ref={(chatText) => {this.chatText = chatText}} onScroll={() => {this.scrollHandle()}}>
 							{this.state.text.split('').map(value => 
 							    <Symbol content={value} borderColorClass={this.borderColorClasses[this.getRandomInt(0, 3)]}/>
 							)}
 							<input type="text"
 							       className="chat-input"
+								   ref={(input) => {this.chatInput = input}}
 								value=""
 								onChange={(event => {
 									this.textChange(event.target.value);
