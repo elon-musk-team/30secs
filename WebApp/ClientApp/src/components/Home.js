@@ -104,7 +104,7 @@ export class Home extends Component {
 		if (scrollHeight - scrollTop === 800) // 800 высота чатека, надо будет взять из свойства
 			setTimeout(() => { this.chatInput.focus() }, 11);
 	}
-	// phraseComponent - сделать
+
 	render () {
 		return (
 			<div className="main-page">
@@ -132,8 +132,12 @@ export class Home extends Component {
 								value=""
 								onChange={(async event => {
 									this.textChange(event.target.value);
-									this.hubConnection.invoke("Send", null, event.target.value)
-									this.hubConnection.invoke("SendFullLetter", {author: this.myInfo.author, symbol: event.target.value, shelfLife: Date.now(), })
+									await this.hubConnection.invoke("Send", null, event.target.value)
+									await this.hubConnection.invoke("SendFullLetter", {
+                                        author: this.myInfo.author,
+                                        symbol: event.target.value,
+                                        shelfLife: Date.now(),
+                                    })
 								})
 								}
 							/>

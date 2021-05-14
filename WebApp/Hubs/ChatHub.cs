@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApp.Dto;
 
 namespace WebApp.Hubs
 {
     public class ChatHub : Hub
     {
-        public static Queue<Letter> Letters = new Queue<Letter>();
-
-
+        public static Queue<LetterDto> Letters = new Queue<LetterDto>();
+        
         public async Task Send(string author, char letter)
         {
-            Letters.Enqueue(new Letter(author, letter));
+            Letters.Enqueue(new LetterDto(author, letter));
             await Clients.Others.SendAsync("Send", letter);
         }
 
@@ -39,36 +39,14 @@ namespace WebApp.Hubs
         }
         
         /// <summary>
-        /// Отправить всю инфу о символе (не тестил)
+        /// Отправить всю инфу о символе
         /// </summary>
-        public async Task SendFullLetter(Letter letter)
+        public async Task SendFullLetter(LetterDto letter)
         {
             Letters.Enqueue(letter);
             await Clients.Others.SendAsync(nameof(SendFullLetter), letter);
         }
     }
-
-    
-
-    public class Letter  // не забыть перенести в отдельный файл
-    {
-        public string Author { get; set; }
-
-        public char Symbol { get; set; }
-
-        private DateTime ShelfLife;
-
-        public Letter(string author, char symbol)
-        {
-            Author = author;
-            Symbol = symbol;
-            ShelfLife = DateTime.Now.AddSeconds(30);
-        }
-
-        public bool NeedDelete() => ShelfLife <= DateTime.Now;
-    }
-
-    
 }
 
 
