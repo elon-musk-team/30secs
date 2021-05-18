@@ -144,16 +144,17 @@ export class Home extends Component {
                                    onChange={(async event => {
                                        this.textChange(event.target.value);
                                        await this.hubConnection.invoke("Send", null, event.target.value)
-                                       await this.hubConnection.invoke("SendFullLetter", {
-                                           author: this.myInfo.author,
-                                           symbol: event.target.value,
-                                           shelfLife: Date.now(),
-                                           receiver: {
-                                               isPrivate: true,
-                                               //todo защиту на бэке от посылания тем, кого нет в твоих контактах. вообще валидация на бэке важнее чем на фронте в тыщу раз
-                                               screenName: this.state.selectedPeerName,
-                                           },
-                                       })
+                                       await this.hubConnection.invoke("SendFullLetter", {author : this.myInfo.screenName, });
+                                       // await this.hubConnection.invoke("SendFullLetter", {
+                                       //     author: this.myInfo.screenName,
+                                       //     symbol: event.target.value,
+                                       //     shelfLife: Date.now(),
+                                       //     receiver: {
+                                       //         isPrivate: true,
+                                       //         todo защиту на бэке от посылания тем, кого нет в твоих контактах. вообще валидация на бэке важнее чем на фронте в тыщу раз
+                                       //         screenName: this.state.selectedPeerName,
+                                       //     },
+                                       // })
                                    })
                                    }
                             />

@@ -44,7 +44,7 @@ namespace WebApp.Hubs
         public async Task SendFullLetter(LetterDto letter)
         {
             Letters.Enqueue(letter);
-            await Clients.Others.SendAsync(nameof(SendFullLetter), letter);
+            await Clients.Others.SendAsync("SendFullLetter", letter);
         }
     }
 }
