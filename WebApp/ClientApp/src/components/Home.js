@@ -144,10 +144,10 @@ export class Home extends Component {
                                    onChange={(async event => {
                                        let symbol = event.target.value;
                                        this.textChange(symbol);
-                                       // await this.hubConnection.invoke("Send", null, symbol)
                                        await this.hubConnection.invoke("Send", {
                                            author: this.myInfo.screenName,
                                            symbol: symbol,
+                                           // не буду передавать время, т.к. на сервере проставляется текущее
                                            // shelfLife: Date.now().toString(),
                                            receiver: {
                                                isPrivate: true,

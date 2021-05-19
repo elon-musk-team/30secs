@@ -14,15 +14,30 @@ namespace WebApp.Hubs
     {
         public static Queue<LetterDto> Letters = new Queue<LetterDto>();
         
+        public override async Task OnConnectedAsync()
+        {
+            var userId = Context.User?.Identity?.Name;
+            // сделать чтоб юзер запоминался в переменной, чтобы потом брать его screenName без транзакции в методе хаба
+            await base.OnConnectedAsync();
+        }
+
         /// <summary>
         /// Отправить всю инфу о символе
         /// </summary>
         public async Task Send(LetterDto letter)
         {
             Letters.Enqueue(letter);
+            if (letter.Receiver.IsPrivate)
+            {
+                
+                
+            }
             await Clients.Others.SendAsync(nameof(Send), letter);
         }
 
+        /// <summary>
+        /// макар прокомментируй
+        /// </summary>
         public async Task GetStartedString()
         {
             if (Letters.Count > 0)
