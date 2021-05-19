@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {Contact} from "./Contact";
 import {authorizedFetch} from "../Utils/authorizedFetch";
 import * as signalR from "@microsoft/signalr";
@@ -32,12 +32,12 @@ export class Home extends Component {
         // signalr
         this.hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("default")
+            .configureLogging(signalR.LogLevel.Debug)
             .build();
         await this.hubConnection.start();
-        this.hubConnection.on("Send", data => this.textChange(data))
+        this.hubConnection.on("Send", data => this.textChange(data.symbol))
         this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
         this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
-        this.hubConnection.on("SendFullLetter", data => console.log(data))
         // contact list
         let contactGetResponse = await authorizedFetch('contact/this-user-contacts');
         if (contactGetResponse.ok) {
@@ -142,19 +142,19 @@ export class Home extends Component {
                                    }}
                                    value=""
                                    onChange={(async event => {
-                                       this.textChange(event.target.value);
-                                       await this.hubConnection.invoke("Send", null, event.target.value)
-                                       await this.hubConnection.invoke("SendFullLetter", {author : this.myInfo.screenName, });
-                                       // await this.hubConnection.invoke("SendFullLetter", {
-                                       //     author: this.myInfo.screenName,
-                                       //     symbol: event.target.value,
-                                       //     shelfLife: Date.now(),
-                                       //     receiver: {
-                                       //         isPrivate: true,
+                                       let symbol = event.target.value;
+                                       this.textChange(symbol);
+                                       // await this.hubConnection.invoke("Send", null, symbol)
+                                       await this.hubConnection.invoke("Send", {
+                                           author: this.myInfo.screenName,
+                                           symbol: symbol,
+                                           // shelfLife: Date.now().toString(),
+                                           receiver: {
+                                               isPrivate: true,
                                        //         todo защиту на бэке от посылания тем, кого нет в твоих контактах. вообще валидация на бэке важнее чем на фронте в тыщу раз
-                                       //         screenName: this.state.selectedPeerName,
-                                       //     },
-                                       // })
+                                               screenName: this.state.selectedPeerName,
+                                           },
+                                       })
                                    })
                                    }
                             />

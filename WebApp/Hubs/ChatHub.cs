@@ -14,10 +14,13 @@ namespace WebApp.Hubs
     {
         public static Queue<LetterDto> Letters = new Queue<LetterDto>();
         
-        public async Task Send(string author, char letter)
+        /// <summary>
+        /// Отправить всю инфу о символе
+        /// </summary>
+        public async Task Send(LetterDto letter)
         {
-            Letters.Enqueue(new LetterDto(author, letter));
-            await Clients.Others.SendAsync("Send", letter);
+            Letters.Enqueue(letter);
+            await Clients.Others.SendAsync(nameof(Send), letter);
         }
 
         public async Task GetStartedString()
@@ -36,15 +39,6 @@ namespace WebApp.Hubs
             }
             if (count > 0)
                 await Clients.All.SendAsync("DeleteSymbols", count);
-        }
-        
-        /// <summary>
-        /// Отправить всю инфу о символе
-        /// </summary>
-        public async Task SendFullLetter(LetterDto letter)
-        {
-            Letters.Enqueue(letter);
-            await Clients.Others.SendAsync("SendFullLetter", letter);
         }
     }
 }
