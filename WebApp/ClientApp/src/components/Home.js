@@ -3,6 +3,8 @@ import {Contact} from "./Contact";
 import {authorizedFetch} from "../Utils/authorizedFetch";
 import * as signalR from "@microsoft/signalr";
 import {Symbol} from "./Symbol/Symbol";
+import authService from "./api-authorization/AuthorizeService";
+import {HttpTransportType} from "@microsoft/signalr";
 
 
 export class Home extends Component {
@@ -30,9 +32,10 @@ export class Home extends Component {
 
     async componentDidMount() {
         // signalr
+        let accessToken = await authService.getAccessToken();
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("default")
-            .configureLogging(signalR.LogLevel.Debug)
+            .withUrl("chatHub", { accessTokenFactory: () => accessToken , transport: HttpTransportType.WebSockets})
+            .configureLogging(signalR.LogLevel.Trace)
             .build();
         await this.hubConnection.start();
         this.hubConnection.on("Send", data => this.textChange(data.symbol))
@@ -46,7 +49,7 @@ export class Home extends Component {
             })
         } else {
             // у данного запроса нет 400-х ошибок, значит произошла жопа
-            alert('идентити опять бесится, перелогинься')
+            alert('сессия просрачена')
         }
 
         // это все надо бы в один запрос или как то со страницей передать
@@ -54,12 +57,14 @@ export class Home extends Component {
         let myInfoResponse = await authorizedFetch('user/my-info');
         if (!myInfoResponse.ok) {
             // у данного запроса нет 400-х ошибок, значит произошла жопа
-            alert('идентити опять бесится, перелогинься')
+            alert('сессия просрачена')
         }
         this.myInfo = await myInfoResponse.json();
 
-        setTimeout(() => this.hubConnection.invoke("GetStartedString"), 500);
-        setInterval(() => this.hubConnection.invoke("CheckSymbols"), 1000);
+        setInterval(() => this.hubConnection.invoke("CheckSymbols", {
+            isPrivate: true,
+            screenName: this.state.selectedPeerName,
+        }), 5000);
     }
 
     textChange(newText) {
@@ -86,7 +91,11 @@ export class Home extends Component {
         });
     }
 
-    selectPeer(screenName) {
+    async selectPeer(screenName) {
+        await this.hubConnection.invoke("GetStartedString", {
+            isPrivate: true,
+            screenName: this.state.selectedPeerName,
+        })
         this.setState({
             selectedPeerName: screenName,
         });
@@ -113,10 +122,10 @@ export class Home extends Component {
                 <div className="user-contacts">
                     <ul className="list-group list-group-flush contacts">
                         <Contact avatarLink="https://i.kym-cdn.com/entries/icons/original/000/013/564/doge.jpg"
-                                 screenName="sample_comtact_umgmg"/>
+                                 screenName="sample_comtact_umgmg" onClick={async () => await this.selectPeer("sample_comtact_umgmg")}/>
                         {this.state.contactDtos.map(value =>
                             <Contact avatarLink={value.avatarLink} screenName={value.screenName}
-                                     onClick={() => this.selectPeer(value.screenName)}/>
+                                     onClick={async () => await this.selectPeer(value.screenName)}/>
                         )}
                     </ul>
                 </div>
@@ -151,7 +160,6 @@ export class Home extends Component {
                                            // shelfLife: Date.now().toString(),
                                            receiver: {
                                                isPrivate: true,
-                                       //         todo защиту на бэке от посылания тем, кого нет в твоих контактах. вообще валидация на бэке важнее чем на фронте в тыщу раз
                                                screenName: this.state.selectedPeerName,
                                            },
                                        })

@@ -5,7 +5,7 @@ export class Contact extends Component {
 
     render() {
         return (
-            <div className="user">
+            <div className="user" onClick={this.props.onClick}>
                 <div className="avatar">
                     <img className="avatar-circle" src={this.props.avatarLink} alt="User name"/>
                     <div className="status off"/>

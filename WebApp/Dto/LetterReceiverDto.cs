@@ -3,7 +3,7 @@ namespace WebApp.Dto
     /// <summary>
     /// получатель сообщения
     /// </summary>
-    public class LetterReceiverDto
+    public class SymbolReceiverDto
     {
         /// <summary>
         /// имя получателя

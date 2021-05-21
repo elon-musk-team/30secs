@@ -16,10 +16,14 @@ using WebApp.Data;
 using WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using WebApp.Hubs;
+using WebApp.Services;
+using WebApp.Services.Interfaces;
 
 namespace WebApp
 {
@@ -50,6 +54,9 @@ namespace WebApp
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+            
+            services.TryAddEnumerable(
+                ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>());
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -96,6 +103,8 @@ namespace WebApp
                 var commentsFile = Path.Combine(baseDirectory, commentsFileName);
                 options.IncludeXmlComments(commentsFile);
             });
+
+            services.AddSingleton<ISymbolInMemoryStorageService, SymbolInMemoryStorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -132,7 +141,7 @@ namespace WebApp
             
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<ChatHub>("default");
+                endpoints.MapHub<ChatHub>("chatHub");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
