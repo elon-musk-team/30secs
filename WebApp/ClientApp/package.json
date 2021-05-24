@@ -13,7 +13,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "reactstrap": "^8.9.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.9",
