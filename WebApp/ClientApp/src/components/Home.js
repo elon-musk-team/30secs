@@ -125,9 +125,10 @@ export class Home extends Component {
                         <Contact avatarLink="https://i.kym-cdn.com/entries/icons/original/000/013/564/doge.jpg"
                                  screenName="sample_comtact_umgmg" onClick={async () => await this.selectPeer("sample_comtact_umgmg")}/>
                         {this.state.contactDtos.map(value =>
-                            <Contact avatarLink={value.avatarLink}
+                            <Contact avatarLink={value.avatarLink} 
                                      screenName={value.screenName}
                                      key={value.screenName}
+                                     isSelected={this.state.selectedPeerName === value.screenName}
                                      onClick={async () => await this.selectPeer(value.screenName)}/>
                         )}
                     </ul>

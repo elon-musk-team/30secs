@@ -33,14 +33,15 @@ header {
 .chat-input:focus {
   outline: none !important;
 }
+
 .user-contacts{
-  padding: 8px 16px;
   border: 1px solid #000;
   width: 30%;
   height: 800px;
   margin-right: 20px;
   background-color: #fff;
   border-radius: 12px ;
+  overflow: hidden;
 }
 
 .contacts{
@@ -113,15 +114,19 @@ header {
 
 .user {
   position: relative;
-  padding: 0 0 0 50px;
+  padding: 8px 8px 8px 50px;
   display: block;
   cursor: pointer;
-  margin: 0 0 20px;
+  /*margin: 0 16px 20px;*/
+}
+
+.user.selected {
+  background-color: lightgray;
 }
 
 .avatar {
-  top: 0;
-  left: 0;
+  top: 8px;
+  left: 8px;
   width: 40px;
   height: 40px;
   position: absolute;
