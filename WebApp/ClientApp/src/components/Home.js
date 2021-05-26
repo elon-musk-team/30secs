@@ -14,6 +14,7 @@ export class Home extends Component {
         text: '',
         contactDtos: [],
         selectedPeerName: "",
+        symbolDtos: [],
     }
     myInfo = null;
     // refs
@@ -22,9 +23,7 @@ export class Home extends Component {
     chatPlace = null;
 
     borderColorClasses = ["border-color-1", "border-color-2", "border-color-3", "border-color-4"];
-
-    // todo сейчас буквы эпилептично раскрашиваются, потом надо чтоб они красились в зависимости от контакта
-    // и для этого сначала надо сделать чтоб сообщения отправлялись кому надо а не всем подряд
+    
     getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -39,7 +38,7 @@ export class Home extends Component {
             .configureLogging(signalR.LogLevel.Trace)
             .build();
         await this.hubConnection.start();
-        this.hubConnection.on("Send", data => this.textChange(data.symbol))
+        this.hubConnection.on("Send", data => this.handleReceive(data))
         this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
         this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
         // contact list
@@ -68,28 +67,34 @@ export class Home extends Component {
         }), 5000);
     }
 
-    textChange(newText) {
-        this.setState({
-            text: this.state.text + newText,
-        });
-        if (newText !== "")
-            setTimeout(() => {
-                if (this.chatText.scrollHeight > this.chatPlace.clientHeight - 10)
-                    this.scrollDown();
-            }, 10)
+    handleReceive(newData) {
+        this.textChange(newData);
+    }
+    
+    textChange(newData) {
+        if (!newData) {
+            return;
+        }
+        this.setState(prevState => ({
+            symbolDtos: [...prevState.symbolDtos, newData]
+        }));
+        setTimeout(() => {
+            if (this.chatText.scrollHeight > this.chatPlace.clientHeight - 10)
+                this.scrollDown();
+        }, 10)
     }
 
 
     textDelete(count) {
-        this.setState({
-            text: this.state.text.slice(count),
-        });
+        this.setState(prevState => ({
+            symbolDtos: prevState.symbolDtos.slice(count),
+        }));
     }
 
     getStartedString(str) {
-        this.setState({
-            text: str
-        });
+        this.setState(prevState => ({
+            text: str //symboldtos
+        }));
     }
 
     async selectPeer(screenName) {
@@ -116,20 +121,40 @@ export class Home extends Component {
                 this.chatInput.focus()
             }, 11);
     }
-
+    
+    getBorderColorClass(symbolObject) {
+        if (this.myInfo.screenName === symbolObject.receiver.screenName){
+            return this.borderColorClasses[0];
+        }
+        return this.borderColorClasses[1];
+    }
+    
+    async handleInput(event) {
+        let symbolChar = event.target.value;
+        let symbolObject = {
+            symbol: symbolChar,
+            // не буду передавать время, т.к. на сервере проставляется текущее
+            // shelfLife: Date.now().toString(),
+            receiver: {
+                isPrivate: true,
+                screenName: this.state.selectedPeerName,
+            },
+        };
+        this.textChange(symbolObject);
+        await this.hubConnection.invoke("Send", symbolObject);
+    }
+    
     render() {
         return (
             <div className="main-page">
                 <div className="user-contacts">
                     <ul className="list-group list-group-flush contacts">
-                        <Contact avatarLink="https://i.kym-cdn.com/entries/icons/original/000/013/564/doge.jpg"
-                                 screenName="sample_comtact_umgmg" onClick={async () => await this.selectPeer("sample_comtact_umgmg")}/>
                         {this.state.contactDtos.map(value =>
-                            <Contact avatarLink={value.avatarLink} 
+                            <Contact linkToAvatar={value.linkToAvatar} 
                                      screenName={value.screenName}
                                      key={value.screenName}
                                      isSelected={this.state.selectedPeerName === value.screenName}
-                                     onClick={async () => await this.selectPeer(value.screenName)}/>
+                                     onClick={async () => {await this.selectPeer(value.screenName)}}/>
                         )}
                     </ul>
                 </div>
@@ -144,10 +169,10 @@ export class Home extends Component {
                         }} onScroll={() => {
                             this.scrollHandle()
                         }}>
-                            {this.state.text.split('').map(value =>
-                                <Symbol content={value}
+                            {this.state.symbolDtos.map(value =>
+                                <Symbol content={value.symbol}
                                         key={shortid()}
-                                        borderColorClass={this.borderColorClasses[this.getRandomInt(0, 3)]}/>
+                                        borderColorClass={this.getBorderColorClass(value)}/>
                             )}
                             <input type="text"
                                    className="chat-input"
@@ -155,20 +180,7 @@ export class Home extends Component {
                                        this.chatInput = input
                                    }}
                                    value=""
-                                   onChange={(async event => {
-                                       let symbol = event.target.value;
-                                       this.textChange(symbol);
-                                       await this.hubConnection.invoke("Send", {
-                                           author: this.myInfo.screenName,
-                                           symbol: symbol,
-                                           // не буду передавать время, т.к. на сервере проставляется текущее
-                                           // shelfLife: Date.now().toString(),
-                                           receiver: {
-                                               isPrivate: true,
-                                               screenName: this.state.selectedPeerName,
-                                           },
-                                       })
-                                   })
+                                   onChange={(async event => await this.handleInput(event))
                                    }
                             />
                         </div>

@@ -13,12 +13,12 @@ namespace WebApp.Hubs.Classes
         /// <param name="userId">id в идентити</param>
         /// <param name="screenName">публичный id</param>
         /// <param name="contacts">контакты</param>
-        public HubUser(string connectionId, string userId, string screenName, List<ApplicationUser> contacts)
+        public HubUser(string connectionId, string userId, string screenName/*, List<ApplicationUser> contacts*/)
         {
             ConnectionId = connectionId;
             UserId = userId;
             ScreenName = screenName;
-            Contacts = contacts;
+            // Contacts = contacts;
         }
 
         /// <summary>
@@ -39,6 +39,6 @@ namespace WebApp.Hubs.Classes
         /// <summary>
         /// контакты
         /// </summary>
-        public List<ApplicationUser> Contacts { get; init; }
+        // public List<ApplicationUser> Contacts { get; init; }
     };
 }

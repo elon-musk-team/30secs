@@ -2,19 +2,16 @@
 
 export class Contact extends Component {
     static displayName = Contact.name;
-
-    constructor(props) {
-        super(props);
-        this.selectedClass = this.props.isSelected
-            ? " selected"
-            : "";
-    }
     
     render() {
+        let selectedClass = this.props.isSelected
+            ? " selected"
+            : "";
+
         return (
-            <div className={"user" + this.selectedClass} onClick={this.props.onClick}>
+            <div className={"user" + selectedClass} onClick={this.props.onClick}>
                 <div className="avatar">
-                    <img className="avatar-circle" src={this.props.avatarLink} alt="User name"/>
+                    <img className="avatar-circle" src={this.props.linkToAvatar} alt="User name"/>
                     <div className="status off"/>
                 </div>
                 <div className="ct-name">{this.props.screenName}</div>

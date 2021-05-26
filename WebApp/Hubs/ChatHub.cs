@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Serilog;
 using WebApp.Data;
 using WebApp.Dto;
 using WebApp.Hubs.Classes;
@@ -13,30 +13,36 @@ namespace WebApp.Hubs
     public class ChatHub : BaseAuthorizedHub
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly ILogger _logger;
         private readonly ISymbolInMemoryStorageService _symbolStorageService;
 
         public ChatHub(ApplicationDbContext dbContext,
+            ILogger logger,
             ISymbolInMemoryStorageService symbolStorageService)
         {
             _dbContext = dbContext;
+            _logger = logger;
             _symbolStorageService = symbolStorageService;
         }
 
         public override async Task OnConnectedAsync()
         {
             var connectedUser = await _dbContext.Users.FindAsync(UserId);
-            var userContacts = await _dbContext.UsersToContacts
-                .Where(x => x.UserId == UserId)
-                .Select(x => x.Contact)
-                .ToListAsync();
-            _symbolStorageService.ConnectedUsers.Add(connectedUser.ScreenName,
-                new HubUser(Context.ConnectionId, UserId, connectedUser.ScreenName, userContacts));
+            // var userContacts = await _dbContext.UsersToContacts
+                // .Where(x => x.UserId == UserId)
+                // .Select(x => x.Contact)
+                // .ToListAsync();
+            var hubUser = new HubUser(Context.ConnectionId, UserId, connectedUser.ScreenName/*, userContacts*/);
+            _logger.Information("connecting user {@HubUser}", hubUser);
+            _symbolStorageService.ConnectedUsers.Add(connectedUser.ScreenName, hubUser);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var connectedUser = await _dbContext.Users.FindAsync(UserId);
+            var hubUser = _symbolStorageService.ConnectedUsers[connectedUser.ScreenName];
+            _logger.Information("disconnecting user {@HubUser}", hubUser);
             _symbolStorageService.ConnectedUsers.Remove(connectedUser.ScreenName);
             await base.OnDisconnectedAsync(exception);
         }
@@ -46,6 +52,11 @@ namespace WebApp.Hubs
         /// </summary>
         public async Task Send(SymbolDto letter)
         {
+            // todo это вполне нормально сейчас, но если проект получит продолжение
+            // то мы ведь можем писать не только подключенным юзерам...
+            // или сделаем заглушку типа сначала позови в чат
+            // тогда уже и пуши в браузере выйдут из беты
+            // в этом случае можно оставить
             if (!_symbolStorageService.ConnectedUsers.TryGetValue(letter.Receiver.ScreenName, out var receiverUser))
             {
                 // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются зломать
@@ -82,7 +93,7 @@ namespace WebApp.Hubs
 
             var symbols = _symbolStorageService.GetChatSymbols(UserId, receiverUser.UserId);
             if (symbols.Count > 0)
-                await Clients.Caller.SendAsync("GetStartedString", new string(symbols.Select(s => s.Symbol).ToArray()));
+                await Clients.Caller.SendAsync("GetStartedString", symbols);
         }
 
         public async Task CheckSymbols(SymbolReceiverDto receiverDto)
@@ -107,7 +118,7 @@ namespace WebApp.Hubs
             }
 
             if (count > 0)
-                await Clients.All.SendAsync("DeleteSymbols", count);
+                await Clients.Clients(receiverUser.ConnectionId, Context.ConnectionId).SendAsync("DeleteSymbols", count);
         }
     }
 }
