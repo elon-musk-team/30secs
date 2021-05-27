@@ -7,6 +7,7 @@ using WebApp.Constants;
 using WebApp.Data;
 using WebApp.Dto;
 using WebApp.Models;
+using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
 {
@@ -14,10 +15,12 @@ namespace WebApp.Controllers
     public class ContactController : BaseAuthorizedController
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IContactLogicService _contactLogicService;
 
-        public ContactController(ApplicationDbContext applicationDbContext)
+        public ContactController(ApplicationDbContext applicationDbContext, IContactLogicService contactLogicService)
         {
             _applicationDbContext = applicationDbContext;
+            _contactLogicService = contactLogicService;
         }
 
         /// <summary>
@@ -27,16 +30,7 @@ namespace WebApp.Controllers
         [ProducesResponseType(typeof(List<ContactDto>), 200)]
         public async Task<IActionResult> GetThisUserContacts()
         {
-            var contacts = await _applicationDbContext.UsersToContacts
-                .Where(x => x.UserId == UserId)
-                .Select(x => x.Contact)
-                .ToListAsync();
-            var contactDtos = contacts.Select(x => new ContactDto
-            {
-                ScreenName = x.ScreenName,
-                LinkToAvatar = x.LinkToAvatar,
-            });
-            return Ok(contactDtos);
+            return Ok(await _contactLogicService.GetMyContacts(UserId));
         }
         
         /// <summary>

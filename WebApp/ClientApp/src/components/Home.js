@@ -11,12 +11,11 @@ import {authorizedFetch} from "../Utils/authorizedFetch";
 export class Home extends Component {
     static displayName = Home.name;
     state = {
-        text: '',
-        contactDtos: [],
+        myInfo: {myContacts: [], screenName: '', linkToAvatar: ''},
         selectedPeerName: "",
         symbolDtos: [],
     }
-    myInfo = null;
+    
     // refs
     chatInput = null;
     chatText = null;
@@ -41,26 +40,17 @@ export class Home extends Component {
         this.hubConnection.on("Send", data => this.handleReceive(data))
         this.hubConnection.on("DeleteSymbols", data => this.textDelete(data))
         this.hubConnection.on("GetStartedString", data => this.getStartedString(data))
-        // contact list
-        let contactGetResponse = await authorizedFetch('contact/this-user-contacts');
-        if (contactGetResponse.ok) {
-            this.setState({
-                contactDtos: await contactGetResponse.json(),
-            })
-        } else {
-            // у данного запроса нет 400-х ошибок, значит произошла жопа
-            alert('сессия просрачена')
-        }
-
-        // это все надо бы в один запрос или как то со страницей передать
+        
         // my info
         let myInfoResponse = await authorizedFetch('user/my-info');
         if (!myInfoResponse.ok) {
-            // у данного запроса нет 400-х ошибок, значит произошла жопа
-            alert('сессия просрачена')
+            alert('пацаны продлите сессию у идентити блять')
         }
-        this.myInfo = await myInfoResponse.json();
-
+        let myInfo = await myInfoResponse.json();
+        this.setState({
+            myInfo: myInfo,
+        })
+        
         setInterval(() => this.hubConnection.invoke("CheckSymbols", {
             isPrivate: true,
             screenName: this.state.selectedPeerName,
@@ -91,9 +81,9 @@ export class Home extends Component {
         }));
     }
 
-    getStartedString(str) {
-        this.setState(prevState => ({
-            text: str //symboldtos
+    getStartedString(startSymbols) {
+        this.setState(() => ({
+            symbolDtos: startSymbols,
         }));
     }
 
@@ -149,7 +139,7 @@ export class Home extends Component {
             <div className="main-page">
                 <div className="user-contacts">
                     <ul className="list-group list-group-flush contacts">
-                        {this.state.contactDtos.map(value =>
+                        {this.state.myInfo.myContacts.map(value =>
                             <Contact linkToAvatar={value.linkToAvatar} 
                                      screenName={value.screenName}
                                      key={value.screenName}

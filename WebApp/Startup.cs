@@ -104,7 +104,9 @@ namespace WebApp
                 options.IncludeXmlComments(commentsFile);
             });
 
-            services.AddSingleton<ISymbolInMemoryStorageService, SymbolInMemoryStorageService>();
+            services
+                .AddSingleton<ISymbolInMemoryStorageService, SymbolInMemoryStorageService>()
+                .AddTransient<IContactLogicService, ContactLogicService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
