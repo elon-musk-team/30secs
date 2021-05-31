@@ -52,11 +52,6 @@ namespace WebApp.Hubs
         /// </summary>
         public async Task Send(SymbolDto letter)
         {
-            // todo это вполне нормально сейчас, но если проект получит продолжение
-            // то мы ведь можем писать не только подключенным юзерам...
-            // или сделаем заглушку типа сначала позови в чат
-            // тогда уже и пуши в браузере выйдут из беты
-            // в этом случае можно оставить
             if (!_symbolStorageService.ConnectedUsers.TryGetValue(letter.Receiver.ScreenName, out var receiverUser))
             {
                 // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются зломать

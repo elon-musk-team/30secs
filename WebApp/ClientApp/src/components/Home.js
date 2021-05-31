@@ -94,6 +94,7 @@ export class Home extends Component {
             screenName: this.state.selectedPeerName,
         })
         this.setState({
+            symbolDtos: [],
             selectedPeerName: screenName,
         });
     }
