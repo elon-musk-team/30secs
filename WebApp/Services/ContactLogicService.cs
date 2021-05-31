@@ -31,6 +31,7 @@ namespace WebApp.Services
             {
                 ScreenName = x.ScreenName,
                 LinkToAvatar = x.LinkToAvatar,
+                StatusMessage = x.StatusMessage,
             });
             return contactDtos;
         }

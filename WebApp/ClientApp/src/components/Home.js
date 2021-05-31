@@ -144,6 +144,7 @@ export class Home extends Component {
                             <Contact linkToAvatar={value.linkToAvatar} 
                                      screenName={value.screenName}
                                      key={value.screenName}
+                                     statusMessage={value.statusMessage}
                                      isSelected={this.state.selectedPeerName === value.screenName}
                                      onClick={async () => {await this.selectPeer(value.screenName)}}/>
                         )}

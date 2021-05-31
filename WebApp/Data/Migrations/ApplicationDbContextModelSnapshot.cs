@@ -29,7 +29,7 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("varchar(200) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -47,7 +47,7 @@ namespace WebApp.Data.Migrations
 
                     b.Property<DateTime?>("Expiration")
                         .IsRequired()
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SessionId")
                         .HasMaxLength(100)
@@ -79,10 +79,10 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("varchar(200) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime?>("ConsumedTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -94,7 +94,7 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("varchar(200) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime?>("Expiration")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SessionId")
                         .HasMaxLength(100)
@@ -123,7 +123,7 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -160,7 +160,7 @@ namespace WebApp.Data.Migrations
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -183,7 +183,7 @@ namespace WebApp.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -207,7 +207,7 @@ namespace WebApp.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -219,10 +219,10 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -234,7 +234,7 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -255,7 +255,7 @@ namespace WebApp.Data.Migrations
             modelBuilder.Entity("WebApp.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -278,7 +278,7 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -298,9 +298,12 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ScreenName")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("StatusMessage")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -332,10 +335,10 @@ namespace WebApp.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ContactId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
