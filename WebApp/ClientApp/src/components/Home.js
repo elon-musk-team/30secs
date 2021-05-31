@@ -102,12 +102,14 @@ export class Home extends Component {
     }
 
     scrollHandle(){
-        document.querySelector(".chat-input").blur()
-        let scrollHeight = document.querySelector('.chat-text').scrollHeight;
-        let scrollTop = document.querySelector('.chat-text').scrollTop;
-        let height = document.querySelector('.main-page').clientHeight;
+        this.chatInput.blur()
+        let scrollHeight = this.chatText.scrollHeight;
+        let scrollTop = this.chatText.scrollTop
+        let height = this.mainPage.clientHeight;
         if (height - scrollHeight - scrollTop < 10) 
-          setTimeout(function () { document.querySelector(".chat-input").focus()}, 11);
+            setTimeout(() => {
+                this.chatInput.focus()
+            }, 11);
       }
     
     getBorderColorClass(symbolObject) {
