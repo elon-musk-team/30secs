@@ -44,7 +44,7 @@ export class Home extends Component {
         // my info
         let myInfoResponse = await authorizedFetch('user/my-info');
         if (!myInfoResponse.ok) {
-            alert('пацаны продлите сессию у идентити блять')
+            alert('пацаны продлите сессию у идентити')
         }
         let myInfo = await myInfoResponse.json();
         this.setState({
@@ -101,22 +101,21 @@ export class Home extends Component {
         this.chatText.scrollTop = this.chatText.scrollHeight;
     }
 
-    scrollHandle() {
-        this.chatInput.blur()
-        let scrollHeight = this.chatText.scrollHeight;
-        let scrollTop = this.chatText.scrollTop
-        // надо будет вообще гибкий макет делать такта))0
-        if (scrollHeight - scrollTop === 800) // 800 высота чатека, надо будет взять из свойства
-            setTimeout(() => {
-                this.chatInput.focus()
-            }, 11);
-    }
+    scrollHandle(){
+        document.querySelector(".chat-input").blur()
+        let scrollHeight = document.querySelector('.chat-text').scrollHeight;
+        let scrollTop = document.querySelector('.chat-text').scrollTop;
+        let height = document.querySelector('.main-page').clientHeight;
+        if (height - scrollHeight - scrollTop < 10) 
+          setTimeout(function () { document.querySelector(".chat-input").focus()}, 11);
+      }
     
     getBorderColorClass(symbolObject) {
-        if (this.myInfo.screenName === symbolObject.receiver.screenName){
-            return this.borderColorClasses[0];
-        }
-        return this.borderColorClasses[1];
+            if (this.state.myInfo.screenName === symbolObject.receiver.screenName){
+                return this.borderColorClasses[0];
+            }
+            return this.borderColorClasses[1];
+
     }
     
     async handleInput(event) {
@@ -159,9 +158,12 @@ export class Home extends Component {
                         }} onScroll={() => {
                             this.scrollHandle()
                         }}>
-                            {this.state.symbolDtos.map(value =>
+                            {this.state.symbolDtos.map((value, index) =>
                                 <Symbol content={value.symbol}
+                                        screenName={this.state.selectedPeerName === value.receiver.screenName ? this.state.myInfo.screenName : this.state.selectedPeerName}
                                         key={shortid()}
+                                        isFirst={index === 0}
+                                        isLast={index === this.state.symbolDtos.length - 1}
                                         borderColorClass={this.getBorderColorClass(value)}/>
                             )}
                             <input type="text"
