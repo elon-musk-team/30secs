@@ -137,7 +137,7 @@ export class Home extends Component {
     
     render() {
         return (
-            <div className="main-page">
+            <div className="main-page" ref={(mainPage) => this.mainPage = mainPage}>
                 <div className="user-contacts">
                     <ul className="list-group list-group-flush contacts">
                         {this.state.myInfo.myContacts.map(value =>
