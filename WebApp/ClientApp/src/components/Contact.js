@@ -15,7 +15,7 @@ export class Contact extends Component {
                     <div className="status off"/>
                 </div>
                 <div className="ct-name">{this.props.screenName}</div>
-                <div className="ct-mood">additional info might go here</div>
+                <div className="ct-mood">{this.props.statusMessage}</div>
             </div>
         )
     }

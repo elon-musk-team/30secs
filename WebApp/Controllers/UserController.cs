@@ -32,6 +32,7 @@ namespace WebApp.Controllers
             {
                 ScreenName = myUser.ScreenName,
                 LinkToAvatar = myUser.LinkToAvatar,
+                StatusMessage = myUser.StatusMessage,
                 MyContacts = myContacts.ToList(),
             });
         }

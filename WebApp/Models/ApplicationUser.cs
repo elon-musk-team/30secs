@@ -27,5 +27,10 @@ namespace WebApp.Models
         /// ссылка на аватарку
         /// </summary>
         public string LinkToAvatar { get; set; }
+        
+        /// <summary>
+        /// статус показываемый под именем
+        /// </summary>
+        public string StatusMessage { get; set; }
     }
 }
