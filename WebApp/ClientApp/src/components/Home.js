@@ -33,7 +33,7 @@ export class Home extends Component {
         // signalr
         let accessToken = await authService.getAccessToken();
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("chatHub", { accessTokenFactory: () => accessToken , transport: HttpTransportType.WebSockets})
+            .withUrl("chatHub", { accessTokenFactory: () => accessToken , transport: HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents})
             .configureLogging(signalR.LogLevel.Trace)
             .build();
         await this.hubConnection.start();
