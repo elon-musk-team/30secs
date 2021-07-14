@@ -28,11 +28,7 @@ namespace WebApp.Hubs
         public override async Task OnConnectedAsync()
         {
             var connectedUser = await _dbContext.Users.FindAsync(UserId);
-            // var userContacts = await _dbContext.UsersToContacts
-                // .Where(x => x.UserId == UserId)
-                // .Select(x => x.Contact)
-                // .ToListAsync();
-            var hubUser = new HubUser(Context.ConnectionId, UserId, connectedUser.ScreenName/*, userContacts*/);
+            var hubUser = new HubUser(Context.ConnectionId, UserId, connectedUser.ScreenName);
             _logger.Information("connecting user {@HubUser}", hubUser);
             _symbolStorageService.ConnectedUsers.Add(connectedUser.ScreenName, hubUser);
             await base.OnConnectedAsync();
@@ -54,7 +50,7 @@ namespace WebApp.Hubs
         {
             if (!_symbolStorageService.ConnectedUsers.TryGetValue(letter.Receiver.ScreenName, out var receiverUser))
             {
-                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются зломать
+                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются взломать
                 return;
             }
 
@@ -74,15 +70,12 @@ namespace WebApp.Hubs
                 await Clients.Others.SendAsync(nameof(Send), letter);
             }
         }
-
-        /// <summary>
-        /// макар прокомментируй
-        /// </summary>
+        
         public async Task GetStartedString(SymbolReceiverDto receiverDto)
         {
             if (!_symbolStorageService.ConnectedUsers.TryGetValue(receiverDto.ScreenName, out var receiverUser))
             {
-                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются зломать
+                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются взломать
                 return;
             }
 
@@ -101,7 +94,7 @@ namespace WebApp.Hubs
             }
             if (!_symbolStorageService.ConnectedUsers.TryGetValue(receiverDto.ScreenName, out var receiverUser))
             {
-                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются зломать
+                // не смогли получить юзера из коллекции, либо ошибка в коде, либо нас пытаются взломать
                 return;
             }
             

@@ -4,7 +4,7 @@ import {HttpTransportType} from "@microsoft/signalr";
 import shortid from "shortid";
 import {Symbol} from "./Symbol/Symbol";
 import authService from "./api-authorization/AuthorizeService";
-import {Contact} from "./Contact";
+import {Contact} from "./Contact/Contact";
 import {authorizedFetch} from "../Utils/authorizedFetch";
 
 
@@ -45,7 +45,7 @@ export class Home extends Component {
         // my info
         let myInfoResponse = await authorizedFetch('user/my-info');
         if (!myInfoResponse.ok) {
-            alert('пацаны продлите сессию у идентити')
+            alert('ошибка сессии для api')
         }
         let myInfo = await myInfoResponse.json();
         this.setState({
@@ -99,6 +99,10 @@ export class Home extends Component {
         });
     }
 
+    async deleteAction(){
+        
+    }
+    
     scrollDown() {
         this.chatText.scrollTop = this.chatText.scrollHeight;
     }
@@ -126,8 +130,6 @@ export class Home extends Component {
         let symbolChar = event.target.value;
         let symbolObject = {
             symbol: symbolChar,
-            // не буду передавать время, т.к. на сервере проставляется текущее
-            // shelfLife: Date.now().toString(),
             receiver: {
                 isPrivate: true,
                 screenName: this.state.selectedPeerName,
@@ -148,6 +150,7 @@ export class Home extends Component {
                                      key={value.screenName}
                                      statusMessage={value.statusMessage}
                                      isSelected={this.state.selectedPeerName === value.screenName}
+                                     deleteAction={this.deleteAction()}
                                      onClick={async () => {await this.selectPeer(value.screenName)}}/>
                         )}
                     </ul>
@@ -156,7 +159,9 @@ export class Home extends Component {
                     this.chatInput.focus();
                     this.scrollDown()
                 }}>
-                    <div className="messages-place"></div>
+                    <div className="messages-place">
+                        
+                    </div>
                     <div className="chat-text-wrap">
                         <div className="chat-text" id="chat-content" ref={(chatText) => {
                             this.chatText = chatText

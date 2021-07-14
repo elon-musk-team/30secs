@@ -1,4 +1,5 @@
 ﻿import {Component} from "react";
+import './style.css'
 
 export class Contact extends Component {
     static displayName = Contact.name;
@@ -14,7 +15,10 @@ export class Contact extends Component {
                     <img className="avatar-circle" src={this.props.linkToAvatar} alt="User name"/>
                     <div className="status off"/>
                 </div>
-                <div className="ct-name">{this.props.screenName}</div>
+                <div className="ct-name">
+                    {this.props.screenName}
+                    <svg className="cross" />
+                </div>
                 <div className="ct-mood">{this.props.statusMessage}</div>
             </div>
         )
